@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% block content %}
+<legend class="border-bottom mb-4"> Posts by {{user.username}} <small>({{ posts.total }})</small></legend>
+{% for post in posts.items %}
+    <!-- showing the posts, same as before, but wuth bootstrap CSS-->
+    <article class="media content-section">
+        <img class="rounded-circle article-img" src="{{ url_for('static', filename='pics/'+post.author.image_file) }}" />
+        <div class="media-body">
+            <div class="article-metadata">
+                <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d %H:%M') }}</small>
+            </div>
+            <h2><a class="article-title" href="{{ url_for('showPost', post_id=post.id) }}">{{ post.title }}</a>
+                {% if post.author == current_user %}
+                    <small class="float-right btn-sm">
+                        <a class="btn btn-secondary btn-sm m-1" href="{{ url_for('updatePost', post_id=post.id) }}">Edit</a>
+                        <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal"
+                            data-target="#deleteModal">Delete</button>
+                    </small>
+                {% endif %}
+            </h2>
+            <p class="article-content">{{ post.content }}</p>
+        </div>
+    </article>
+    <!-- Modal for deleting post-->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Delete Post?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <form action="{{ url_for('deletePost', post_id=post.id) }}" method="POST">
+                        <input class="btn btn-danger" type="submit" value="Delete">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+{% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+    {% if page_num %}
+        {% if page_num == posts.page %}
+            <a class="btn btn-info mb-4" href="{{url_for('userPosts', username=user.username, page=page_num)}}">{{ page_num }}</a>
+        {% else %}
+            <a class="btn btn-outline-info mb-4" href="{{url_for('userPosts', username=user.username, page=page_num)}}">{{ page_num }}</a>
+        {% endif %}
+    {% else %}
+        ...
+    {% endif %}
+{% endfor %}
+{% endblock content %}

@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block content %}
+<!-- showinf the posts, same as before, but wuth bootstrap CSS-->
+<article class="media content-section">
+    <img class="rounded-circle article-img" src="{{ url_for('static', filename='pics/'+post.author.image_file) }}" />
+    <div class="media-body">
+        <div class="article-metadata">
+            <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d %H:%M') }}</small>
+        </div>
+        <h2 class="article-title"> {{ post.title }}</h2>
+        <p class="article-content">{{ post.content }}</p>
+    </div>
+</article>
+{% endblock content %}
